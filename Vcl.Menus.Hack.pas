@@ -128,7 +128,7 @@ end;
 
 procedure TMenuHack.UpdateItem(Item: TMenuItem);
 const
-  Breaks: array[TMenuBreak] of DWORD = (MFT_STRING, MFT_MENUBREAK, MFT_MENUBARBREAK);
+  Breaks: array[TMenuBreak] of DWORD = (0, MFT_MENUBREAK, MFT_MENUBARBREAK);
 var
   MenuItemInfo: TMenuItemInfo;
   Bitmap: TBitmap;
@@ -148,13 +148,14 @@ begin
 
   if (Item.Bitmap <> nil) and not Item.Bitmap.Empty then
     MenuItemInfo.hbmpItem := Item.Bitmap.Handle
-  else if Item.ImageIndex >= 0 then
+  else if (Item.ImageIndex >= 0) and (Item.ImageIndex < Images.Count) then
   begin
     if not ImageCache.TryGetValue(Item.ImageIndex, Bitmap) then
     begin
       if (Images is TVirtualImageList) and (TVirtualImageList(Images).ImageCollection <> nil) then
       begin
-        Bitmap := TVirtualImageList(Images).ImageCollection.GetBitmap(Item.ImageIndex, Images.Width, Images.Height);
+        var ImageIndex := TVirtualImageList(Images).Images[Item.ImageIndex].CollectionIndex;
+        Bitmap := TVirtualImageList(Images).ImageCollection.GetBitmap(ImageIndex, Images.Width, Images.Height);
         Bitmap.AlphaFormat := afPremultiplied;
       end
       else
