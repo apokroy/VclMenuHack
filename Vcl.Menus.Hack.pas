@@ -127,6 +127,8 @@ begin
 end;
 
 procedure TMenuHack.UpdateItem(Item: TMenuItem);
+const
+  Breaks: array[TMenuBreak] of DWORD = (MFT_STRING, MFT_MENUBREAK, MFT_MENUBARBREAK);
 var
   MenuItemInfo: TMenuItemInfo;
   Bitmap: TBitmap;
@@ -173,6 +175,14 @@ begin
 
     MenuItemInfo.hbmpItem := Bitmap.Handle;
   end;
+
+  MenuItemInfo.fType := MenuItemInfo.fType or Breaks[Item.Break];
+  if Item.RadioItem then
+    MenuItemInfo.fType := MenuItemInfo.fType or MFT_RADIOCHECK
+  else if Item.Caption = '-' then
+    MenuItemInfo.fType := MenuItemInfo.fType or MFT_SEPARATOR;
+  if MenuItemInfo.fType <> 0 then
+    MenuItemInfo.fMask := MenuItemInfo.fMask or MIIM_FTYPE;
 
   SetMenuItemInfo(Handle, Item.Command, False, MenuItemInfo);
 
