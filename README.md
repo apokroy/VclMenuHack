@@ -1,6 +1,5 @@
-***Moved to Utils!***
-
 ## VclMenuHack
+***Moved to Utils!***
 Patches TMenu class to paint themed menu’s icons
 
 With patch:
